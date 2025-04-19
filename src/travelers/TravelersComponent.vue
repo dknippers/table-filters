@@ -19,7 +19,7 @@ const { filtered } = useTravelers(query);
 
 </template>
 
-<style lang="less" scoped>
+<style scoped>
 .travelers {
     display: grid;
     gap: 1rem;

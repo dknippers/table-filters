@@ -2,8 +2,8 @@
 import TableComponent from '@/table/TableComponent.vue';
 import type { Column } from '@/table/types';
 import type { Traveler } from './types.ts';
-import TravelersTableCards from './TravelersTableCardTypes.vue';
-import TravelersTableCardExpirationDates from './TravelersTableCardExpirationDates.vue';
+import MultilineCell from '@/table/MultilineCell.vue';
+
 
 defineProps<{
     data: Traveler[];
@@ -17,18 +17,18 @@ const columns: Column<Traveler>[] = [
     {
         header: "Cards",
         render: traveler => ({
-            component: TravelersTableCards,
+            component: MultilineCell,
             props: {
-                cards: traveler.cards
+                lines: traveler.cards.map(card => card.cardType)
             }
         })
     },
     {
         header: "Expiration",
         render: traveler => ({
-            component: TravelersTableCardExpirationDates,
+            component: MultilineCell,
             props: {
-                cards: traveler.cards
+                lines: traveler.cards.map(card => card.expirationDate.toLocaleDateString())
             }
         })
     },
