@@ -53,8 +53,14 @@ const travelers: Traveler[] = [
 ];
 
 export function useTravelers(query: Ref<string>) {
+  function includes(term: string) {
+    return term.toLowerCase().includes(query.value.toLowerCase());
+  }
+
   const filtered = computed(() =>
-    travelers.filter(item => item.name.toLowerCase().includes(query.value.toLowerCase()))
+    travelers.filter(
+      item => includes(item.name) || item.cards.some(card => includes(card.cardType))
+    )
   );
 
   return {
