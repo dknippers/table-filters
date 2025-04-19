@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T">
+import { isVNode, render } from 'vue';
 import type { Column } from './types';
 
 defineProps<{
@@ -21,9 +22,12 @@ defineProps<{
                     <template v-if="column.value">
                         <span>{{ column.value(item) }}</span>
                     </template>
+
                     <template v-else-if="column.render">
-                        <template v-for="{ component, props } in [column.render(item)]">
-                            <component :is="component" v-bind="props" />
+                        <template v-for="renderResult in [column.render(item)]">
+                            <component v-if="renderResult.component" :is="renderResult.component"
+                                v-bind="renderResult.props" />
+                            <component v-else :is="renderResult" />
                         </template>
                     </template>
                 </td>

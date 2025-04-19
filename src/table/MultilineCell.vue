@@ -1,21 +1,15 @@
 <script setup lang="ts">
+import MultilineSlot from "./MultilineSlot.vue";
+
 defineProps<{
     lines: string[]
 }>();
 </script>
 
 <template>
-    <div class="lines">
-        <div v-for="(line, index) in lines" :key="index">
-            {{ line }}
-        </div>
-    </div>
+    <MultilineSlot :items="lines">
+        <template #default="{ item }">
+            {{ item }}
+        </template>
+    </MultilineSlot>
 </template>
-
-<style scoped>
-.lines {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-</style>
