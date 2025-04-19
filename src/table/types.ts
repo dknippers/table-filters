@@ -1,12 +1,7 @@
-import type { Component, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type Column<T> = {
   header: string;
-  value?: (item: T) => string;
-  render?: (item: T) =>
-    | {
-        component: Component;
-        props: Record<string, any>;
-      }
-    | VNode;
+  value?: (item: T) => string | number | boolean;
+  render?: (item: T) => VNode;
 };
