@@ -9,4 +9,6 @@ export type Card = {
   expirationDate: Date;
 };
 
-export type CardType = "Anonymous" | "Personal";
+export const cardTypes = ["Anonymous", "Personal"] as const;
+
+export type CardType = (typeof cardTypes)[number];
