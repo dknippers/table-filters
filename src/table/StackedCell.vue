@@ -1,13 +1,15 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts">
+import { isVNode, type VNode } from "vue";
 defineProps<{
-    items: T[];
+    items: (string | number | boolean | VNode)[]
 }>();
 </script>
 
 <template>
     <div class="items">
         <div v-for="(item, index) in items" :key="index">
-            <slot :item="item" />
+            <component v-if="isVNode(item)" :is="item" />
+            <span v-else>{{ item }}</span>
         </div>
     </div>
 </template>
