@@ -5,36 +5,37 @@ import Text from "./components/Text.vue";
 
 type Person = {
   name: string;
-  birthday: Date;
   age: number;
 };
 
 const p1: Person = {
   name: "dani",
-  birthday: new Date(1987, 9, 6),
   age: 37,
 }
 
 const p2: Person = {
   name: "chen",
-  birthday: new Date(1986, 10, 11),
   age: 38
 }
 
 const columns: Column<Person>[] = [
   {
-    name: "Name",
+    header: "Name",
     value: person => person.name,
   },
   {
-    name: "Age",
+    header: "Age",
     render: person => ({
       component: Text,
       props: {
         text: person.age
       }
     })
-  }
+  },
+  {
+    header: "Combined",
+    value: person => `${person.name} is ${person.age} years old`,
+  },
 ]
 const data = [p1, p2];
 
