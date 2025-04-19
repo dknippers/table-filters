@@ -6,6 +6,11 @@ body {
     serif;
 }
 
+input[type="text"] {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
 #app {
   height: 100vh;
   display: flex;
@@ -20,7 +25,8 @@ a:visited {
 
 main {
   align-self: center;
-  padding: 4rem;
+  padding: 2rem;
   background-color: #eeeeec;
-  box-shadow: 2px 2px 4px black;
+  box-shadow: 2px 2px 4px gray;
+  border-radius: 4px;
 }

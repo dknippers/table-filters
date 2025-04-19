@@ -9,6 +9,20 @@ const { filtered } = useTravelers(query);
 </script>
 
 <template>
-    <SearchboxComponent v-model="query" />
-    <TravelersTable :data="filtered" />
+    <div class="travelers">
+        <div class="filters">
+            <SearchboxComponent v-model="query" placeholder="filter name or card type" />
+        </div>
+
+        <TravelersTable :data="filtered" />
+    </div>
+
 </template>
+
+<style lang="less" scoped>
+.travelers {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 3fr;
+}
+</style>

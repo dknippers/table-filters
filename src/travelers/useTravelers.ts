@@ -11,12 +11,12 @@ const travelers: Traveler[] = [
       {
         id: `${++id}`,
         cardType: "Anonymous",
-        expirationDate: new Date(2026, 0, 1),
+        expirationDate: new Date(2026, 3, 12),
       },
       {
         id: `${++id}`,
         cardType: "Personal",
-        expirationDate: new Date(2027, 0, 1),
+        expirationDate: new Date(2027, 7, 15),
       },
     ],
   },
@@ -26,12 +26,7 @@ const travelers: Traveler[] = [
       {
         id: `${++id}`,
         cardType: "Anonymous",
-        expirationDate: new Date(2026, 0, 1),
-      },
-      {
-        id: `${++id}`,
-        cardType: "Anonymous",
-        expirationDate: new Date(2027, 0, 1),
+        expirationDate: new Date(2024, 2, 5),
       },
     ],
   },
