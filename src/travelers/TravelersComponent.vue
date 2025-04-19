@@ -10,5 +10,5 @@ const { filtered } = useTravelers(query);
 
 <template>
     <SearchboxComponent v-model="query" />
-    <TravelersTable :travelers="filtered" />
+    <TravelersTable :data="filtered" />
 </template>

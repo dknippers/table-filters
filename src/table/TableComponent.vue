@@ -38,7 +38,8 @@ table {
 
     td,
     th {
-        padding: 1rem;
+        vertical-align: top;
+        padding: 0.5rem 1rem;
         border: 1px solid gray;
     }
 

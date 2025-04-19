@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import TableComponent from '@/table/TableComponent.vue';
 import type { Column } from '@/table/types';
-import TextComponent from '@/components/TextComponent.vue'
 import type { Traveler } from './types.ts';
+import TravelersTableCards from './TravelersTableCardTypes.vue';
+import TravelersTableCardExpirationDates from './TravelersTableCardExpirationDates.vue';
 
 defineProps<{
-    travelers: Traveler[];
+    data: Traveler[];
 }>();
 
 const columns: Column<Traveler>[] = [
@@ -14,21 +15,26 @@ const columns: Column<Traveler>[] = [
         value: traveler => traveler.name,
     },
     {
-        header: "Age",
+        header: "Cards",
         render: traveler => ({
-            component: TextComponent,
+            component: TravelersTableCards,
             props: {
-                text: "TODO_AGE"
+                cards: traveler.cards
             }
         })
     },
     {
-        header: "Combined",
-        value: traveler => "TODO_COMBINED",
+        header: "Expiration",
+        render: traveler => ({
+            component: TravelersTableCardExpirationDates,
+            props: {
+                cards: traveler.cards
+            }
+        })
     },
 ]
 </script>
 
 <template>
-    <TableComponent :columns="columns" :data="travelers" />
+    <TableComponent :columns="columns" :data="data" />
 </template>
