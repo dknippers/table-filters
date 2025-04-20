@@ -1,11 +1,14 @@
 import { computed, ref } from "vue";
-import type { CardType, Traveler } from "./types";
+import type { CardType, Traveler, TravelerSortColumn } from "./types";
 import { filterCardTypes, filterQuery } from "./travelerFilters";
+import type { SortState } from "@/table/types";
+import { sortFn } from "@/utils/utils";
 
 let id = 0;
 
 const all: Traveler[] = [
   {
+    id: ++id,
     name: "Alpha",
     cards: [
       {
@@ -21,6 +24,7 @@ const all: Traveler[] = [
     ],
   },
   {
+    id: ++id,
     name: "Bravo",
     cards: [
       {
@@ -31,6 +35,7 @@ const all: Traveler[] = [
     ],
   },
   {
+    id: ++id,
     name: "Charlie",
     cards: [
       {
@@ -51,15 +56,33 @@ export function useTravelers() {
   const query = ref("");
   const cardTypes = ref<CardType[]>([]);
   const filters = ref({ query, cardTypes });
+  const sort = ref<SortState<TravelerSortColumn>>({ column: "name", asc: true });
 
-  const travelers = computed(() =>
-    all.filter(
+  const travelers = computed(() => {
+    const filtered = filterTravelers(all);
+    return sortTravelers(filtered);
+  });
+
+  function filterTravelers(travelers: Traveler[]) {
+    return travelers.filter(
       traveler => filterQuery(traveler, query.value) && filterCardTypes(traveler, cardTypes.value)
-    )
-  );
+    );
+  }
+
+  function sortTravelers(travelers: Traveler[]) {
+    switch (sort.value.column) {
+      case "id":
+        return sortFn(travelers, t => t.id, sort.value.asc);
+      case "name":
+        return sortFn(travelers, t => t.name, sort.value.asc);
+      default:
+        return travelers; // No sort
+    }
+  }
 
   return {
     travelers,
     filters,
+    sort,
   };
 }

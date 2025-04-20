@@ -5,7 +5,7 @@ import { cardTypes } from './types';
 import { useTravelers } from './useTravelers';
 import CheckboxList from '@/filters/CheckboxList.vue';
 
-const { travelers, filters } = useTravelers();
+const { travelers, filters, sort } = useTravelers();
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const { travelers, filters } = useTravelers();
                 :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))" />
         </div>
 
-        <TravelersTable :data="travelers" />
+        <TravelersTable :data="travelers" :sort="sort" />
     </div>
 
 </template>
