@@ -1,6 +1,9 @@
 body {
   background-color: #2e3436;
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  place-content: center;
   font-family:
     Palatino Linotype,
     serif;
@@ -12,10 +15,8 @@ input[type="text"] {
 }
 
 #app {
-  height: 100vh;
   display: flex;
-  align-content: center;
-  justify-content: center;
+  place-items: center;
 }
 
 a,
@@ -24,9 +25,7 @@ a:visited {
 }
 
 main {
-  align-self: center;
   padding: 2rem;
   background-color: #eeeeec;
-  box-shadow: 2px 2px 4px gray;
   border-radius: 4px;
 }
