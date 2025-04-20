@@ -1,10 +1,10 @@
-import { computed } from "vue";
-import type { Ref } from "vue";
+import { computed, ref } from "vue";
 import type { CardType, Traveler } from "./types";
+import { filterCardTypes, filterQuery } from "./travelerFilters";
 
 let id = 0;
 
-const travelers: Traveler[] = [
+const all: Traveler[] = [
   {
     name: "Alpha",
     cards: [
@@ -47,27 +47,19 @@ const travelers: Traveler[] = [
   },
 ];
 
-function matchCardTypes(traveler: Traveler, cardTypes: CardType[]) {
-  return cardTypes.length === 0 || traveler.cards.some(card => cardTypes.includes(card.cardType));
-}
+export function useTravelers() {
+  const query = ref("");
+  const cardTypes = ref<CardType[]>([]);
+  const filters = ref({ query, cardTypes });
 
-function matchQuery(traveler: Traveler, query: string) {
-  return matchTerm(traveler.name) || traveler.cards.some(card => matchTerm(card.cardType));
-
-  function matchTerm(term: string) {
-    return term.toLowerCase().includes(query.toLowerCase());
-  }
-}
-
-export function useTravelers(query: Ref<string>, cardTypes: Ref<CardType[]>) {
-  const filtered = computed(() =>
-    travelers.filter(
-      traveler => matchQuery(traveler, query.value) && matchCardTypes(traveler, cardTypes.value)
+  const travelers = computed(() =>
+    all.filter(
+      traveler => filterQuery(traveler, query.value) && filterCardTypes(traveler, cardTypes.value)
     )
   );
 
   return {
     travelers,
-    filtered,
+    filters,
   };
 }

@@ -1,27 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import SearchboxComponent from '@/searchbox/SearchboxComponent.vue';
 import TravelersTable from './TravelersTable.vue';
-import { cardTypes, type CardType } from './types';
+import { cardTypes } from './types';
 import { useTravelers } from './useTravelers';
 import CheckboxList from '@/filters/CheckboxList.vue';
 
-const query = ref("");
-const selectedCardTypes = ref<CardType[]>([]);
-
-const { filtered } = useTravelers(query, selectedCardTypes);
+const { travelers, filters } = useTravelers();
 </script>
 
 <template>
     <div class="travelers">
         <div class="filters">
-            <SearchboxComponent v-model="query" placeholder="filter name or card type" />
+            <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" />
 
-            <CheckboxList v-model="selectedCardTypes" :title="'Card type'"
+            <CheckboxList v-model="filters.cardTypes" :title="'Card type'"
                 :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))" />
         </div>
 
-        <TravelersTable :data="filtered" />
+        <TravelersTable :data="travelers" />
     </div>
 
 </template>
@@ -37,15 +33,5 @@ const { filtered } = useTravelers(query, selectedCardTypes);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    .filter {
-        display: flex;
-        flex-direction: column;
-
-        >.title {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-    }
 }
 </style>
