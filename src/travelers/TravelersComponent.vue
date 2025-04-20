@@ -4,6 +4,7 @@ import SearchboxComponent from '@/searchbox/SearchboxComponent.vue';
 import TravelersTable from './TravelersTable.vue';
 import { cardTypes, type CardType } from './types';
 import { useTravelers } from './useTravelers';
+import CheckboxList from '@/filters/CheckboxList.vue';
 
 const query = ref("");
 const selectedCardTypes = ref<CardType[]>([]);
@@ -16,13 +17,8 @@ const { filtered } = useTravelers(query, selectedCardTypes);
         <div class="filters">
             <SearchboxComponent v-model="query" placeholder="filter name or card type" />
 
-            <div class="filter">
-                <div class="title">Card type</div>
-                <label v-for="cardType in cardTypes">
-                    <input type="checkbox" :value="cardType" v-model="selectedCardTypes">
-                    {{ cardType }}
-                </label>
-            </div>
+            <CheckboxList v-model="selectedCardTypes" :title="'Card type'"
+                :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))" />
         </div>
 
         <TravelersTable :data="filtered" />
