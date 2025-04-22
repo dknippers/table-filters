@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import type { CardType, Traveler, TravelerSortColumn } from "./types";
 import { filterCardTypes, filterQuery } from "./travelerFilters";
 import type { SortState } from "@/table/types";
@@ -52,13 +52,19 @@ const all: Traveler[] = [
   },
 ];
 
-export function useTravelers() {
+export function useTravelers(queryServer: boolean) {
   const query = ref("");
   const cardTypes = ref<CardType[]>([]);
   const filters = ref({ query, cardTypes });
   const sort = ref<SortState<TravelerSortColumn>>({ column: "name", asc: true });
 
+  const serverResults = ref<Traveler[]>([]);
+
   const travelers = computed(() => {
+    if (queryServer) {
+      return serverResults.value;
+    }
+
     const filtered = filterTravelers(all);
     return sortTravelers(filtered);
   });
@@ -76,8 +82,41 @@ export function useTravelers() {
       case "name":
         return sortFn(travelers, t => t.name, sort.value.asc);
       default:
-        return travelers; // No sort
+        return travelers;
     }
+  }
+
+  // Debounced fetch
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function debouncedFetch() {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchFromServer();
+    }, 320);
+  }
+
+  async function fetchFromServer() {
+    const params = new URLSearchParams();
+
+    if (query.value) params.append("query", query.value);
+    if (cardTypes.value.length) {
+      cardTypes.value.forEach(ct => params.append("cardTypes", ct));
+    }
+    if (sort.value.column) params.append("sortColumn", sort.value.column);
+    params.append("sortAsc", String(sort.value.asc));
+
+    const url = `/_api/travelers/all?${params.toString()}`;
+    console.log(`Calling ${url}`);
+
+    const delay = 500 + Math.random() * 300;
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    serverResults.value = [...sortTravelers(filterTravelers(all))];
+  }
+
+  if (queryServer) {
+    watch([query, cardTypes, sort], debouncedFetch, { immediate: true, deep: true });
   }
 
   return {

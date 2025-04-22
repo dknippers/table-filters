@@ -5,7 +5,7 @@ import { cardTypes } from './types';
 import { useTravelers } from './useTravelers';
 import CheckboxList from '@/filters/CheckboxList.vue';
 
-const { travelers, filters, sort } = useTravelers();
+const { travelers, filters, sort } = useTravelers(false);
 </script>
 
 <template>
