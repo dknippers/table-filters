@@ -1,8 +1,9 @@
 import { computed, ref, watch } from "vue";
 import type { CardType, Traveler, TravelerSortColumn } from "./types";
-import { filterCardTypes, filterQuery } from "./travelerFilters";
+import { filterTravelers } from "./travelerFilters";
 import type { SortState } from "@/table/types";
-import { sortFn } from "@/utils/utils";
+import { sortFn, debounce } from "@/utils/utils";
+import { sortTravelers } from "./travelerSorting";
 
 let id = 0;
 
@@ -52,51 +53,17 @@ const all: Traveler[] = [
   },
 ];
 
-export function useTravelers(queryServer: boolean) {
+export function useTravelers() {
   const query = ref("");
   const cardTypes = ref<CardType[]>([]);
   const filters = ref({ query, cardTypes });
   const sort = ref<SortState<TravelerSortColumn>>({ column: "name", asc: true });
+  const loading = ref(true);
 
-  const serverResults = ref<Traveler[]>([]);
+  const travelers = ref<Traveler[]>([]);
 
-  const travelers = computed(() => {
-    if (queryServer) {
-      return serverResults.value;
-    }
-
-    const filtered = filterTravelers(all);
-    return sortTravelers(filtered);
-  });
-
-  function filterTravelers(travelers: Traveler[]) {
-    return travelers.filter(
-      traveler => filterQuery(traveler, query.value) && filterCardTypes(traveler, cardTypes.value)
-    );
-  }
-
-  function sortTravelers(travelers: Traveler[]) {
-    switch (sort.value.column) {
-      case "id":
-        return sortFn(travelers, t => t.id, sort.value.asc);
-      case "name":
-        return sortFn(travelers, t => t.name, sort.value.asc);
-      default:
-        return travelers;
-    }
-  }
-
-  // Debounced fetch
-  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-  function debouncedFetch() {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      fetchFromServer();
-    }, 320);
-  }
-
-  async function fetchFromServer() {
+  let last = 0;
+  async function fetchTravelers() {
     const params = new URLSearchParams();
 
     if (query.value) params.append("query", query.value);
@@ -106,18 +73,55 @@ export function useTravelers(queryServer: boolean) {
     if (sort.value.column) params.append("sortColumn", sort.value.column);
     params.append("sortAsc", String(sort.value.asc));
 
-    const url = `/_api/travelers/all?${params.toString()}`;
+    const qs = params.toString();
+    const url = `/_api/travelers/all${qs.length > 0 ? `?${qs}` : ""}`;
     console.log(`Calling ${url}`);
 
-    const delay = 500 + Math.random() * 300;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    const active = ++last;
 
-    serverResults.value = [...sortTravelers(filterTravelers(all))];
+    try {
+      loading.value = true;
+      const delay = 500 + Math.random() * 300;
+      await new Promise(resolve => setTimeout(resolve, delay));
+
+      if (active !== last) {
+        // A newer fetch has started -- drop this stale result.
+        return;
+      }
+
+      const sorted = sortTravelers(all, sort.value.column, sort.value.asc);
+      const filtered = filterTravelers(sorted, query.value, cardTypes.value);
+      travelers.value = [...filtered];
+    } catch {
+      console.error("Error fetching from server");
+    } finally {
+      if (active === last) {
+        loading.value = false;
+      }
+    }
   }
 
-  if (queryServer) {
-    watch([query, cardTypes, sort], debouncedFetch, { immediate: true, deep: true });
-  }
+  watch([cardTypes, sort], fetchTravelers, { deep: true, immediate: true });
+  watch([query], debounce(fetchTravelers, 320));
+
+  return {
+    travelers,
+    filters,
+    sort,
+    loading,
+  };
+}
+
+export function useTravelersClient() {
+  const query = ref("");
+  const cardTypes = ref<CardType[]>([]);
+  const filters = ref({ query, cardTypes });
+  const sort = ref<SortState<TravelerSortColumn>>({ column: "name", asc: true });
+
+  const travelers = computed(() => {
+    const filtered = filterTravelers(all, query.value, cardTypes.value);
+    return sortTravelers(filtered, sort.value.column, sort.value.asc);
+  });
 
   return {
     travelers,

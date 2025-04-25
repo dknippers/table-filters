@@ -5,6 +5,7 @@ const props = defineProps<{
     columns: Column<T>[];
     data: T[];
     sort?: SortState;
+    loading: boolean;
 }>();
 
 function handleSort(column: Column<T>) {
@@ -40,7 +41,19 @@ function handleSort(column: Column<T>) {
         </thead>
 
         <tbody>
-            <tr v-for="item in data">
+            <tr v-if="loading">
+                <td :colspan="columns.length" class="display">
+                    <div class="loader">Loading ...</div>
+                </td>
+            </tr>
+
+            <tr v-if="!loading && data.length === 0">
+                <td :colspan="columns.length" class="display">
+                    <div class="text">No results</div>
+                </td>
+            </tr>
+
+            <tr v-if="!loading && data.length > 0" v-for="item in data">
                 <td v-for="column in columns" :key="column.header">
                     <template v-if="column.value">
                         <span>{{ column.value(item) }}</span>
@@ -78,5 +91,16 @@ table {
             font-size: 80%;
         }
     }
+}
+
+.display {
+    vertical-align: middle;
+}
+
+.loader,
+.text {
+    font-size: 2rem;
+    padding: 1rem;
+    text-align: center;
 }
 </style>

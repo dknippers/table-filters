@@ -7,6 +7,7 @@ import StackedCell from '@/table/StackedCell.vue';
 defineProps<{
     data: Traveler[];
     sort?: SortState;
+    loading: boolean;
 }>();
 
 const columns: Column<Traveler, TravelerSortColumn>[] = [
@@ -27,5 +28,5 @@ const columns: Column<Traveler, TravelerSortColumn>[] = [
 </script>
 
 <template>
-    <TableComponent :columns="columns" :data="data" :sort="sort" />
+    <TableComponent :columns="columns" :data="data" :sort="sort" :loading="loading" />
 </template>
