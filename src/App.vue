@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TravelersComponent from "./travelers/TravelersComponent.vue";
+import TravelersComponent from './travelers/TravelersComponent.vue';
 </script>
 
 <template>

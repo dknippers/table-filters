@@ -10,8 +10,8 @@ export type Card = {
   expirationDate: Date;
 };
 
-export const cardTypes = ["Anonymous", "Personal"] as const;
+export const cardTypes = ['Anonymous', 'Personal'] as const;
 
 export type CardType = (typeof cardTypes)[number];
 
-export type TravelerSortColumn = "id" | "name";
+export type TravelerSortColumn = 'id' | 'name';

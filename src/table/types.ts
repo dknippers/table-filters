@@ -1,4 +1,4 @@
-import type { VNode } from "vue";
+import type { VNode } from 'vue';
 
 export type SortState<T = string> = {
   column: T;
