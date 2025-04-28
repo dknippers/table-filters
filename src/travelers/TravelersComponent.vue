@@ -6,7 +6,7 @@ import { useTravelers } from './useTravelers';
 import CheckboxList from '@/filters/CheckboxList.vue';
 import PagerComponent from '@/paging/PagerComponent.vue';
 
-const { travelers, filters, sort, paging, loading } = useTravelers();
+const { travelers, filters, sort, paging, loading, clearFilters } = useTravelers();
 </script>
 
 <template>
@@ -14,21 +14,16 @@ const { travelers, filters, sort, paging, loading } = useTravelers();
     <div class="filters">
       <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" />
 
-      <CheckboxList
-        v-model="filters.cardTypes"
-        :title="'Card type'"
-        :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))"
-      />
+      <CheckboxList v-model="filters.cardTypes" :title="'Card type'"
+        :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))" />
+
+      <button @click="clearFilters" class="clear-filters">Clear filters</button>
     </div>
 
     <div class="table">
       <TravelersTable :data="travelers" :sort="sort" :loading="loading" />
 
-      <PagerComponent
-        v-model:page="paging.page"
-        v-model:page-size="paging.pageSize"
-        :total-pages="paging.totalPages"
-      />
+      <PagerComponent v-model:page="paging.page" v-model:page-size="paging.pageSize" :total-pages="paging.totalPages" />
     </div>
   </div>
 </template>
@@ -49,5 +44,17 @@ const { travelers, filters, sort, paging, loading } = useTravelers();
 .table {
   display: grid;
   gap: 1rem;
+}
+
+.clear-filters {
+  background: #2e3436;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.clear-filters:hover {
+  cursor: pointer;
+  background: rgb(0, 0, 0, 0.9)
 }
 </style>

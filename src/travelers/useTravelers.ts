@@ -173,6 +173,12 @@ export function useTravelers() {
 
   const travelers = ref<Traveler[]>([]);
 
+  function clearFilters() {
+    query.value = '';
+    cardTypes.value = [];
+    page.value = 1;
+  }
+
   let last = 0;
   async function fetchTravelers() {
     const params = new URLSearchParams();
@@ -219,19 +225,53 @@ export function useTravelers() {
     }
   }
 
-  function refresh() {
+  const debouncedFetch = debounce(() => {
     if (page.value !== 1) {
-      // This will trigger a fetchTravelers via the watch
+      // Will trigger a refetch via watch on page
       page.value = 1;
-    } else {
-      // Page was already at 1 so do a refresh manually
-      fetchTravelers();
+      return;
     }
-  }
 
-  watch([page], fetchTravelers, { immediate: true });
-  watch([cardTypes, sort, pageSize], refresh, { deep: true });
-  watch([query], debounce(refresh, 320));
+    // Explicit fetch
+    fetchTravelers();
+  }, 400);
+
+  watch(
+    [cardTypes, sort, pageSize, page, query],
+    (
+      [newCardTypes, newSort, newPageSize, newPage, newQuery],
+      [oldCardTypes, oldSort, oldPageSize, oldPage, oldQuery]
+    ) => {
+      const sortChanged = newSort.column !== oldSort?.column || newSort.asc !== oldSort.asc;
+      const pageSizeChanged = newPageSize !== oldPageSize;
+      const pageChanged = newPage !== oldPage;
+      const queryChanged = newQuery !== oldQuery;
+      const cardTypesChanged =
+        newCardTypes.length !== oldCardTypes?.length ||
+        newCardTypes.some(ct => !oldCardTypes.includes(ct));
+
+      const anyFilterChanged = sortChanged || pageSizeChanged || cardTypesChanged || queryChanged;
+
+      if (pageChanged) {
+        fetchTravelers();
+        return;
+      }
+
+      if (queryChanged && !sortChanged && !pageSizeChanged && !cardTypesChanged) {
+        debouncedFetch();
+        return;
+      }
+
+      if (anyFilterChanged && page.value !== 1) {
+        page.value = 1;
+        return;
+      }
+
+      // Filters changed on page 1
+      fetchTravelers();
+    },
+    { deep: true, immediate: true }
+  );
 
   return {
     travelers,
@@ -239,6 +279,7 @@ export function useTravelers() {
     sort,
     paging,
     loading,
+    clearFilters,
   };
 }
 
