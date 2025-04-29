@@ -22,9 +22,7 @@ const columns: Column<Traveler, TravelerSortColumn>[] = [
   },
   {
     header: 'Expiration',
-    render: traveler => (
-      <StackedCell items={traveler.cards.map(card => card.expirationDate.toLocaleDateString())} />
-    ),
+    render: traveler => <StackedCell items={traveler.cards.map(card => card.expirationDate.toLocaleDateString())} />,
   },
 ];
 </script>

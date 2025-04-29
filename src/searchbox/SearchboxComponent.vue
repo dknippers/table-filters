@@ -7,7 +7,7 @@ defineProps<{ placeholder?: string }>();
   <input type="text" v-model="model" :placeholder="placeholder" />
 </template>
 
-<style lang="less" scoped>
+<style scoped>
 input {
   padding: 0.5rem;
 }

@@ -35,19 +35,9 @@ function handleSort(column: Column<T>) {
         >
           {{ column.header }}
 
-          <span
-            class="sort-icon"
-            v-if="column.sortColumn && column.sortColumn === sort?.column && sort.asc"
-            >▲</span
-          >
-          <span
-            class="sort-icon"
-            v-if="column.sortColumn && column.sortColumn === sort?.column && !sort.asc"
-            >▼</span
-          >
-          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn !== sort?.column"
-            >△</span
-          >
+          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn === sort?.column && sort.asc">▲</span>
+          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn === sort?.column && !sort.asc">▼</span>
+          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn !== sort?.column">△</span>
         </th>
       </tr>
     </thead>

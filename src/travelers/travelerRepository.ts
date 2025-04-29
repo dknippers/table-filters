@@ -1,7 +1,7 @@
 import type { Page } from '@/paging/types';
 import { filterTravelers } from './travelerFilters';
 import { sortTravelers } from './travelerSorting';
-import type { CardType, Traveler, TravelerSortColumn } from './types';
+import type { Traveler, TravelerFilters } from './types';
 
 let id = 0;
 
@@ -156,25 +156,18 @@ const all: Traveler[] = [
   },
 ];
 
-export async function getTravelers(
-  query: string,
-  cardTypes: CardType[],
-  sortColumn: TravelerSortColumn,
-  sortAsc: boolean,
-  page: number,
-  pageSize: number
-): Promise<Page<Traveler> | null> {
+export async function getTravelers(filters: TravelerFilters): Promise<Page<Traveler> | null> {
   const params = new URLSearchParams();
 
-  if (query) params.append('query', query);
-  if (cardTypes.length) {
-    cardTypes.forEach(ct => params.append('cardTypes', ct));
+  if (filters.query) params.append('query', filters.query);
+  if (filters.cardTypes.length) {
+    filters.cardTypes.forEach(ct => params.append('cardTypes', ct));
   }
-  if (sortColumn) params.append('sortColumn', sortColumn);
-  params.append('sortAsc', String(sortAsc));
+  if (filters.sort.column) params.append('sortColumn', filters.sort.column);
+  params.append('sortAsc', String(filters.sort.column));
 
-  params.append('page', String(page));
-  params.append('pageSize', String(pageSize));
+  params.append('page', String(filters.page));
+  params.append('pageSize', String(filters.pageSize));
 
   const qs = params.toString();
   const url = `/_api/travelers/all${qs.length > 0 ? `?${qs}` : ''}`;
@@ -184,17 +177,17 @@ export async function getTravelers(
     const delay = 500 + Math.random() * 250;
     await new Promise(resolve => setTimeout(resolve, delay));
 
-    const filtered = filterTravelers(all, query, cardTypes);
-    const sorted = sortTravelers(filtered, sortColumn, sortAsc);
-    const paged = sorted.slice((page - 1) * pageSize, page * pageSize);
-    const totalPages = Math.ceil(sorted.length / pageSize);
+    const filtered = filterTravelers(all, filters.query, filters.cardTypes);
+    const sorted = sortTravelers(filtered, filters.sort.column, filters.sort.asc);
+    const paged = sorted.slice((filters.page - 1) * filters.pageSize, filters.page * filters.pageSize);
+    const totalPages = Math.ceil(sorted.length / filters.pageSize);
 
     return {
       items: paged,
       totalItems: sorted.length,
       totalPages,
-      page,
-      pageSize,
+      page: filters.page,
+      pageSize: filters.pageSize,
     };
   } catch {
     console.error('Error fetching from server');
