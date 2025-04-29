@@ -14,8 +14,11 @@ const { travelers, filters, sort, paging, loading, clearFilters } = useTravelers
     <div class="filters">
       <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" />
 
-      <CheckboxList v-model="filters.cardTypes" :title="'Card type'"
-        :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))" />
+      <CheckboxList
+        v-model="filters.cardTypes"
+        :title="'Card type'"
+        :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))"
+      />
 
       <button @click="clearFilters" class="clear-filters">Clear filters</button>
     </div>
@@ -23,7 +26,11 @@ const { travelers, filters, sort, paging, loading, clearFilters } = useTravelers
     <div class="table">
       <TravelersTable :data="travelers" :sort="sort" :loading="loading" />
 
-      <PagerComponent v-model:page="paging.page" v-model:page-size="paging.pageSize" :total-pages="paging.totalPages" />
+      <PagerComponent
+        v-model:page="paging.page"
+        v-model:page-size="paging.pageSize"
+        :total-pages="paging.totalPages"
+      />
     </div>
   </div>
 </template>
@@ -55,6 +62,6 @@ const { travelers, filters, sort, paging, loading, clearFilters } = useTravelers
 
 .clear-filters:hover {
   cursor: pointer;
-  background: rgb(0, 0, 0, 0.9)
+  background: rgb(0, 0, 0, 0.9);
 }
 </style>
