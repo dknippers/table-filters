@@ -282,34 +282,3 @@ export function useTravelers() {
     clearFilters,
   };
 }
-
-export function useTravelersClient() {
-  const query = ref('');
-  const cardTypes = ref<CardType[]>([]);
-  const filters = ref({ query, cardTypes });
-  const sort = ref<SortState<TravelerSortColumn>>({ column: 'name', asc: true });
-  const page = ref(1);
-  const pageSize = ref(DEFAULT_PAGE_SIZE);
-  const totalPages = ref(0);
-  const paging = ref({ page, pageSize, totalPages });
-  const loading = ref(false);
-
-  watch([query, cardTypes, sort, pageSize], () => (page.value = 1), { deep: true });
-
-  const travelers = computed(() => {
-    const filtered = filterTravelers(all, query.value, cardTypes.value);
-    const sorted = sortTravelers(filtered, sort.value.column, sort.value.asc);
-    const paged = sorted.slice((page.value - 1) * pageSize.value, page.value * pageSize.value);
-    totalPages.value = Math.ceil(sorted.length / pageSize.value);
-
-    return paged;
-  });
-
-  return {
-    travelers,
-    filters,
-    sort,
-    paging,
-    loading,
-  };
-}
