@@ -31,7 +31,7 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
         return;
       }
 
-      totalPages.value = pagedTravelers?.totalPages;
+      totalPages.value = pagedTravelers.totalPages;
       travelers.value = pagedTravelers.items;
     } catch {
       console.error('Error fetching from server');
