@@ -1,5 +1,5 @@
-import { reactive, ref, watch } from 'vue';
-import type { Traveler, TravelerFilters, TravelerSortColumn } from './types';
+import { reactive, ref, watch, watchEffect } from 'vue';
+import type { Traveler, TravelerFilters } from './types';
 import { getTravelers } from './travelerRepository';
 
 export function useTravelers(initial: Partial<TravelerFilters> = {}) {
@@ -14,6 +14,8 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   const totalPages = ref(0);
   const loading = ref(true);
   const travelers = ref<Traveler[]>([]);
+
+  const isStale = ref(true);
 
   function clearFilters() {
     filters.query = '';
@@ -41,19 +43,27 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   }
 
   watch(
-    () => [filters.query, filters.cardTypes, filters.sort, filters.page, filters.pageSize],
-    ([, , , newPage], [, , , oldPage]) => {
-      if (oldPage === newPage && filters.page !== 1) {
-        filters.page = 1;
-        return;
-      }
-
-      fetchTravelers();
+    () => [filters.query, filters.cardTypes, filters.sort, filters.pageSize],
+    () => {
+      filters.page = 1;
+      isStale.value = true;
     },
     { deep: true }
   );
 
-  fetchTravelers();
+  watch(
+    () => filters.page,
+    () => {
+      isStale.value = true;
+    }
+  );
+
+  watchEffect(async () => {
+    if (isStale.value) {
+      await fetchTravelers();
+      isStale.value = false;
+    }
+  });
 
   return {
     travelers,
