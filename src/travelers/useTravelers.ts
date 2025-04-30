@@ -16,21 +16,24 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   const loading = ref(true);
   const travelers = ref<Traveler[]>([]);
 
-  const isStale = ref(true);
-
   function clearFilters() {
     filters.query = '';
     filters.cardTypes = [];
     filters.page = 1;
   }
 
+  let lastRunId = 0;
   async function fetchTravelers() {
+    let runId = ++lastRunId;
+
     try {
       loading.value = true;
 
       const pagedTravelers = await getTravelers(filters);
 
-      if (pagedTravelers == null) {
+      const isStale = runId !== lastRunId;
+
+      if (pagedTravelers == null || isStale) {
         return;
       }
 
@@ -39,7 +42,9 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     } catch {
       console.error('Error fetching from server');
     } finally {
-      loading.value = false;
+      if (runId === lastRunId) {
+        loading.value = false;
+      }
     }
   }
 
@@ -47,23 +52,10 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     () => [filters.query, filters.cardTypes, filters.sortBy, filters.sortOrder, filters.pageSize],
     () => {
       filters.page = 1;
-      isStale.value = true;
     }
   );
 
-  watch(
-    () => filters.page,
-    () => {
-      isStale.value = true;
-    }
-  );
-
-  watchEffect(async () => {
-    if (!isStale.value) return;
-
-    await fetchTravelers();
-    isStale.value = false;
-  });
+  watchEffect(fetchTravelers);
 
   return {
     travelers,

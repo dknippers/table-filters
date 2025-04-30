@@ -175,13 +175,13 @@ export async function getTravelers(filters: TravelerFilters): Promise<Page<Trave
   console.log(`Calling ${url}`);
 
   try {
-    const delay = 500 + Math.random() * 250;
-    await new Promise(resolve => setTimeout(resolve, delay));
-
     const filtered = filterTravelers(all, filters.query, filters.cardTypes);
     const sorted = sortTravelers(filtered, filters.sortBy, filters.sortOrder);
     const paged = sorted.slice((filters.page - 1) * filters.pageSize, filters.page * filters.pageSize);
     const totalPages = Math.ceil(sorted.length / filters.pageSize);
+
+    const delay = 500 + Math.random() * 250;
+    await new Promise(resolve => setTimeout(resolve, delay));
 
     return {
       items: paged,
