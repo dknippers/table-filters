@@ -12,7 +12,7 @@ const { travelers, filters, totalPages, loading, clearFilters } = useTravelers()
 <template>
   <div class="travelers">
     <div class="filters">
-      <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" />
+      <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" :debounce-ms="400" />
 
       <CheckboxList
         v-model="filters.cardTypes"

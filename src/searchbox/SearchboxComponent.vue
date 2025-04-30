@@ -3,18 +3,21 @@ import { debounce } from '@/utils/utils';
 import { computed } from 'vue';
 
 const model = defineModel<string>({ required: true });
-defineProps<{ placeholder?: string }>();
+const props = defineProps<{ placeholder?: string; debounceMs?: number }>();
 
-const debouncedSetValue = debounce((v: string) => (model.value = v), 400);
-
-const input = computed({
-  get: () => model.value,
-  set: debouncedSetValue,
-});
+const inputModel =
+  props.debounceMs && props.debounceMs > 0
+    ? computed({
+        get: () => model.value,
+        set: debounce((value: string) => {
+          model.value = value;
+        }, props.debounceMs),
+      })
+    : model;
 </script>
 
 <template>
-  <input type="text" v-model="input" :placeholder="placeholder" />
+  <input type="text" v-model="inputModel" :placeholder="placeholder" />
 </template>
 
 <style scoped>
