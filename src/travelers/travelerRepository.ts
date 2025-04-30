@@ -164,7 +164,7 @@ export async function getTravelers(filters: TravelerFilters): Promise<Page<Trave
     filters.cardTypes.forEach(ct => params.append('cardTypes', ct));
   }
   if (filters.sort.column) params.append('sortColumn', filters.sort.column);
-  params.append('sortAsc', String(filters.sort.column));
+  params.append('sortAsc', String(filters.sort.asc));
 
   params.append('page', String(filters.page));
   params.append('pageSize', String(filters.pageSize));
