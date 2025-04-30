@@ -48,7 +48,7 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
       filters.page = 1;
       isStale.value = true;
     },
-    { deep: true }
+    { deep: true } // <- needed for filters.sort
   );
 
   watch(
