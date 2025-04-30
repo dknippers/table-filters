@@ -59,10 +59,10 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   );
 
   watchEffect(async () => {
-    if (isStale.value) {
-      await fetchTravelers();
-      isStale.value = false;
-    }
+    if (!isStale.value) return;
+
+    await fetchTravelers();
+    isStale.value = false;
   });
 
   return {
