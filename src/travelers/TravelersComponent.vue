@@ -24,7 +24,12 @@ const { travelers, filters, totalPages, loading, clearFilters } = useTravelers()
     </div>
 
     <div class="table">
-      <TravelersTable :data="travelers" :sort="filters.sort" :loading="loading" />
+      <TravelersTable
+        :data="travelers"
+        v-model:sorty-by="filters.sortBy"
+        v-model:sort-order="filters.sortOrder"
+        :loading="loading"
+      />
 
       <PagerComponent v-model:page="filters.page" v-model:page-size="filters.pageSize" :total-pages="totalPages" />
     </div>

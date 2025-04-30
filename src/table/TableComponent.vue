@@ -1,25 +1,27 @@
 <script setup lang="ts" generic="T">
-import type { Column, SortState } from './types';
+import type { Column, SortOrder } from './types';
 
-const props = defineProps<{
+const sortBy = defineModel<string>('sortyBy');
+const sortOrder = defineModel<SortOrder>('sortOrder');
+
+defineProps<{
   columns: Column<T>[];
   data: T[];
-  sort?: SortState;
   loading: boolean;
 }>();
 
 function handleSort(column: Column<T>) {
-  if (props.sort == null || column.sortColumn == null) {
+  if (sortBy == null || column.sortBy == null) {
     return;
   }
 
-  if (props.sort.column === column.sortColumn) {
-    props.sort.asc = !props.sort.asc;
+  if (sortBy.value === column.sortBy) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
   } else {
-    props.sort.asc = true;
+    sortOrder.value = 'asc';
   }
 
-  props.sort.column = column.sortColumn;
+  sortBy.value = column.sortBy;
 }
 </script>
 
@@ -31,13 +33,13 @@ function handleSort(column: Column<T>) {
           v-for="column in columns"
           :key="column.header"
           @click="handleSort(column)"
-          :class="{ sort: column.sortColumn != null }"
+          :class="{ sort: column.sortBy != null }"
         >
           {{ column.header }}
 
-          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn === sort?.column && sort.asc">▲</span>
-          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn === sort?.column && !sort.asc">▼</span>
-          <span class="sort-icon" v-if="column.sortColumn && column.sortColumn !== sort?.column">△</span>
+          <span class="sort-icon" v-if="column.sortBy && column.sortBy === sortBy && sortOrder === 'asc'">▲</span>
+          <span class="sort-icon" v-if="column.sortBy && column.sortBy === sortBy && sortOrder === 'desc'">▼</span>
+          <span class="sort-icon" v-if="column.sortBy && column.sortBy !== sortBy">△</span>
         </th>
       </tr>
     </thead>

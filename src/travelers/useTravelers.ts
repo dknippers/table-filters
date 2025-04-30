@@ -6,7 +6,8 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   const filters = reactive<TravelerFilters>({
     query: initial.query ?? '',
     cardTypes: initial.cardTypes ?? [],
-    sort: initial.sort ?? { column: 'name', asc: true },
+    sortBy: initial.sortBy ?? 'name',
+    sortOrder: initial.sortOrder ?? 'asc',
     page: initial.page ?? 1,
     pageSize: initial.pageSize ?? 5,
   });
@@ -43,12 +44,11 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   }
 
   watch(
-    () => [filters.query, filters.cardTypes, filters.sort, filters.pageSize],
+    () => [filters.query, filters.cardTypes, filters.sortBy, filters.sortOrder, filters.pageSize],
     () => {
       filters.page = 1;
       isStale.value = true;
-    },
-    { deep: true } // <- needed for filters.sort
+    }
   );
 
   watch(

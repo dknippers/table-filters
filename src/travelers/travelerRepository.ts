@@ -163,8 +163,9 @@ export async function getTravelers(filters: TravelerFilters): Promise<Page<Trave
   if (filters.cardTypes.length) {
     filters.cardTypes.forEach(ct => params.append('cardTypes', ct));
   }
-  if (filters.sort.column) params.append('sortColumn', filters.sort.column);
-  params.append('sortAsc', String(filters.sort.asc));
+
+  if (filters.sortBy) params.append('sortBy', filters.sortBy);
+  if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
 
   params.append('page', String(filters.page));
   params.append('pageSize', String(filters.pageSize));
@@ -178,7 +179,7 @@ export async function getTravelers(filters: TravelerFilters): Promise<Page<Trave
     await new Promise(resolve => setTimeout(resolve, delay));
 
     const filtered = filterTravelers(all, filters.query, filters.cardTypes);
-    const sorted = sortTravelers(filtered, filters.sort.column, filters.sort.asc);
+    const sorted = sortTravelers(filtered, filters.sortBy, filters.sortOrder);
     const paged = sorted.slice((filters.page - 1) * filters.pageSize, filters.page * filters.pageSize);
     const totalPages = Math.ceil(sorted.length / filters.pageSize);
 

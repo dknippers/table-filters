@@ -1,4 +1,4 @@
-import type { SortState } from '@/table/types';
+import type { SortOrder } from '@/table/types';
 
 export type Traveler = {
   id: number;
@@ -16,12 +16,13 @@ export const cardTypes = ['Anonymous', 'Personal'] as const;
 
 export type CardType = (typeof cardTypes)[number];
 
-export type TravelerSortColumn = 'id' | 'name';
+export type TravelerSortBy = 'id' | 'name';
 
 export type TravelerFilters = {
   query: string;
   cardTypes: CardType[];
-  sort: SortState<TravelerSortColumn>;
+  sortBy: TravelerSortBy;
+  sortOrder: SortOrder;
   page: number;
   pageSize: number;
 };

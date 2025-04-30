@@ -1,13 +1,10 @@
 import type { VNode } from 'vue';
 
-export type SortState<T = string> = {
-  column: T;
-  asc: boolean;
-};
+export type SortOrder = 'asc' | 'desc';
 
-export type Column<T, TSortColumn = string> = {
+export type Column<T, TSortBy = string> = {
   header: string;
-  sortColumn?: TSortColumn;
+  sortBy?: TSortBy;
   value?: (item: T) => string | number | boolean;
   render?: (item: T) => VNode;
 };

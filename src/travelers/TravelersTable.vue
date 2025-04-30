@@ -1,20 +1,22 @@
 <script setup lang="tsx">
 import TableComponent from '@/table/TableComponent.vue';
-import type { Column, SortState } from '@/table/types';
-import type { Traveler, TravelerSortColumn } from './types.ts';
+import type { Column, SortOrder } from '@/table/types';
+import type { Traveler, TravelerSortBy } from './types.ts';
 import StackedCell from '@/table/StackedCell.vue';
+
+const sortBy = defineModel<TravelerSortBy>('sortyBy');
+const sortOrder = defineModel<SortOrder>('sortOrder');
 
 defineProps<{
   data: Traveler[];
-  sort?: SortState;
   loading: boolean;
 }>();
 
-const columns: Column<Traveler, TravelerSortColumn>[] = [
+const columns: Column<Traveler, TravelerSortBy>[] = [
   {
     header: 'Name',
     value: traveler => traveler.name,
-    sortColumn: 'name',
+    sortBy: 'name',
   },
   {
     header: 'Cards',
@@ -28,5 +30,11 @@ const columns: Column<Traveler, TravelerSortColumn>[] = [
 </script>
 
 <template>
-  <TableComponent :columns="columns" :data="data" :sort="sort" :loading="loading" />
+  <TableComponent
+    :columns="columns"
+    :data="data"
+    v-model:sorty-by="sortBy"
+    v-model:sort-order="sortOrder"
+    :loading="loading"
+  />
 </template>
