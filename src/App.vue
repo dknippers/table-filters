@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TravelersComponent from './travelers/TravelersComponent.vue';
+import TravelerOverview from './travelers/TravelerOverview.vue';
 </script>
 
 <template>
   <main>
-    <TravelersComponent />
+    <TravelerOverview />
   </main>
 </template>
