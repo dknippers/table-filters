@@ -48,14 +48,9 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     }
   }
 
-  watch(
-    () => [filters.query, filters.cardTypes, filters.sortBy, filters.sortOrder, filters.pageSize],
-    () => {
-      filters.page = 1;
-    }
-  );
-
-  watchEffect(fetchTravelers);
+  watchEffect(async () => {
+    await fetchTravelers();
+  });
 
   return {
     travelers,

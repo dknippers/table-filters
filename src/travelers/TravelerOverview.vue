@@ -12,10 +12,16 @@ const { travelers, filters, totalPages, loading, clearFilters } = useTravelers()
 <template>
   <div class="travelers">
     <div class="filters">
-      <SearchboxComponent v-model="filters.query" placeholder="filter name or card type" :debounce-ms="400" />
+      <SearchboxComponent
+        v-model="filters.query"
+        @update:model-value="filters.page = 1"
+        placeholder="filter name or card type"
+        :debounce-ms="400"
+      />
 
       <CheckboxList
         v-model="filters.cardTypes"
+        @update:model-value="filters.page = 1"
         :title="'Card type'"
         :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))"
       />
@@ -27,11 +33,18 @@ const { travelers, filters, totalPages, loading, clearFilters } = useTravelers()
       <TravelersTable
         :data="travelers"
         v-model:sorty-by="filters.sortBy"
+        @update:sorty-by="filters.page = 1"
         v-model:sort-order="filters.sortOrder"
+        @update:sort-order="filters.page = 1"
         :loading="loading"
       />
 
-      <PagerComponent v-model:page="filters.page" v-model:page-size="filters.pageSize" :total-pages="totalPages" />
+      <PagerComponent
+        v-model:page="filters.page"
+        v-model:page-size="filters.pageSize"
+        @update:page-size="filters.page = 1"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
