@@ -7,7 +7,8 @@ const sortOrder = defineModel<SortOrder>('sortOrder');
 defineProps<{
   columns: Column<T>[];
   data: T[];
-  loading: boolean;
+  loading?: boolean;
+  error?: boolean;
 }>();
 
 function handleSort(column: Column<T>) {
@@ -46,18 +47,27 @@ function handleSort(column: Column<T>) {
 
     <tbody>
       <tr v-if="loading">
-        <td :colspan="columns.length" class="display">
-          <div class="loader">Loading ...</div>
+        <td :colspan="columns.length" class="info">
+          <slot v-if="$slots.loading" name="loading"></slot>
+          <div v-else class="text">Loading ...</div>
         </td>
       </tr>
 
-      <tr v-if="!loading && data.length === 0">
-        <td :colspan="columns.length" class="display">
-          <div class="text">No results</div>
+      <tr v-else-if="error">
+        <td :colspan="columns.length" class="info">
+          <slot v-if="$slots.error" name="error"></slot>
+          <div v-else class="text error">An error has occurred</div>
         </td>
       </tr>
 
-      <tr v-if="!loading && data.length > 0" v-for="item in data">
+      <tr v-else-if="data.length === 0">
+        <td :colspan="columns.length" class="info">
+          <slot v-if="$slots.noResults" name="noResults"></slot>
+          <div v-else class="text">No results</div>
+        </td>
+      </tr>
+
+      <tr v-else v-for="item in data">
         <td v-for="column in columns" :key="column.header">
           <template v-if="column.value">
             <span>{{ column.value(item) }}</span>
@@ -97,14 +107,17 @@ table {
   }
 }
 
-.display {
+.info {
   vertical-align: middle;
 }
 
-.loader,
 .text {
-  font-size: 2rem;
+  font-size: 150%;
   padding: 1rem;
   text-align: center;
+}
+
+.error {
+  color: #c00000;
 }
 </style>

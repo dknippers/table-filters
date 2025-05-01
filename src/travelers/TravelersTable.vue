@@ -9,7 +9,8 @@ const sortOrder = defineModel<SortOrder>('sortOrder');
 
 defineProps<{
   data: Traveler[];
-  loading: boolean;
+  loading?: boolean;
+  error?: boolean;
 }>();
 
 const columns: Column<Traveler, TravelerSortBy>[] = [
@@ -36,5 +37,6 @@ const columns: Column<Traveler, TravelerSortBy>[] = [
     v-model:sorty-by="sortBy"
     v-model:sort-order="sortOrder"
     :loading="loading"
+    :error="error"
   />
 </template>

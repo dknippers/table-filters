@@ -6,7 +6,7 @@ import { useTravelers } from './useTravelers';
 import CheckboxList from '@/filters/CheckboxList.vue';
 import PagerComponent from '@/paging/PagerComponent.vue';
 
-const { travelers, filters, totalPages, loading, clearFilters } = useTravelers();
+const { travelers, filters, totalPages, loading, error, clearFilters } = useTravelers();
 </script>
 
 <template>
@@ -37,6 +37,7 @@ const { travelers, filters, totalPages, loading, clearFilters } = useTravelers()
         v-model:sort-order="filters.sortOrder"
         @update:sort-order="filters.page = 1"
         :loading="loading"
+        :error="error"
       />
 
       <PagerComponent

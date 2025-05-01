@@ -14,6 +14,7 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
 
   const totalPages = ref(0);
   const loading = ref(true);
+  const error = ref(false);
   const travelers = ref<Traveler[]>([]);
 
   function clearFilters() {
@@ -28,6 +29,7 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
 
     try {
       loading.value = true;
+      error.value = false;
 
       const pagedTravelers = await getTravelers(filters);
 
@@ -40,7 +42,9 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
       totalPages.value = pagedTravelers.totalPages;
       travelers.value = pagedTravelers.items;
     } catch {
-      console.error('Error fetching from server');
+      if (runId === lastRunId) {
+        error.value = true;
+      }
     } finally {
       if (runId === lastRunId) {
         loading.value = false;
@@ -56,6 +60,7 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     travelers,
     filters,
     loading,
+    error,
     totalPages,
     clearFilters,
   };
