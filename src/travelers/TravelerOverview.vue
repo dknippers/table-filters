@@ -26,7 +26,13 @@ const { travelers, filters, totalPages, loading, error, clearFilters } = useTrav
         :items="cardTypes.map(cardType => ({ label: cardType, value: cardType }))"
       />
 
-      <button @click="clearFilters" class="clear-filters">Clear filters</button>
+      <button
+        @click="clearFilters"
+        class="clear-filters"
+        v-if="filters.cardTypes.length > 0 || filters.query.length > 0"
+      >
+        Clear filters
+      </button>
     </div>
 
     <div class="table">
