@@ -3,9 +3,11 @@ import TableComponent from '@/table/TableComponent.vue';
 import type { Column, SortOrder } from '@/table/types';
 import type { Traveler, TravelerSortBy } from './types.ts';
 import StackedCell from '@/table/StackedCell.vue';
+import { useCssModule } from 'vue';
 
 const sortBy = defineModel<TravelerSortBy>('sortyBy');
 const sortOrder = defineModel<SortOrder>('sortOrder');
+const style = useCssModule();
 
 defineProps<{
   data: Traveler[];
@@ -21,7 +23,13 @@ const columns: Column<Traveler, TravelerSortBy>[] = [
   },
   {
     header: 'Cards',
-    render: traveler => <StackedCell items={traveler.cards.map(card => card.cardType)} />,
+    render: traveler => (
+      <StackedCell
+        items={traveler.cards.map(card => (
+          <span class={style.cardType}>{card.cardType}</span>
+        ))}
+      />
+    ),
   },
   {
     header: 'Expiration',
@@ -40,3 +48,9 @@ const columns: Column<Traveler, TravelerSortBy>[] = [
     :error="error"
   />
 </template>
+
+<style module>
+.cardType {
+  font-weight: bold;
+}
+</style>
