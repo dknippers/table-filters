@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { debounce } from '@/utils/utils';
+import { debounce } from '@/utils/sort';
 import { computed } from 'vue';
 
 const model = defineModel<string>({ required: true });

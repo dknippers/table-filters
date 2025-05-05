@@ -1,6 +1,9 @@
-import { reactive, ref, watch, watchEffect } from 'vue';
+import { reactive, ref, watchEffect } from 'vue';
 import type { Traveler, TravelerFilters } from './types';
-import { getTravelers } from './travelerRepository';
+import { useFetch } from '@/composables/useFetch';
+import { createQueryString } from '@/utils/createQueryString';
+import type { Page } from '@/paging/types';
+import { mapTraveler } from './travelerMapper';
 
 export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   const filters = reactive<TravelerFilters>({
@@ -13,9 +16,8 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   });
 
   const totalPages = ref(0);
-  const loading = ref(true);
-  const error = ref(false);
   const travelers = ref<Traveler[]>([]);
+  const { fetchData, loading, error } = useFetch<Page<Traveler>>('http://localhost:8080/travelers');
 
   function clearFilters() {
     filters.query = '';
@@ -23,33 +25,15 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     filters.page = 1;
   }
 
-  let lastRunId = 0;
   async function fetchTravelers() {
-    let runId = ++lastRunId;
-
-    try {
-      loading.value = true;
-      error.value = false;
-
-      const pagedTravelers = await getTravelers(filters);
-
-      const isStale = runId !== lastRunId;
-
-      if (pagedTravelers == null || isStale) {
-        return;
-      }
-
-      totalPages.value = pagedTravelers.totalPages;
-      travelers.value = pagedTravelers.items;
-    } catch {
-      if (runId === lastRunId) {
-        error.value = true;
-      }
-    } finally {
-      if (runId === lastRunId) {
-        loading.value = false;
-      }
+    const qs = createQueryString(filters);
+    const page = await fetchData(qs);
+    if (page == null) {
+      return;
     }
+
+    travelers.value = page.items.map(traveler => mapTraveler(traveler));
+    totalPages.value = page.totalPages;
   }
 
   watchEffect(async () => {
