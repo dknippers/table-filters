@@ -361,7 +361,7 @@ function sortTravelers(travelers, column, sortOrder) {
 }
 
 // --- Main API Endpoint ---
-app.get('/travelers', (req, res) => {
+app.get('/_api/travelers/getall', (req, res) => {
   const { query, cardTypes, sortBy, sortOrder, page, pageSize } = req.query;
 
   // Check if cardTypes exists and is already an array (when multiple values are sent)

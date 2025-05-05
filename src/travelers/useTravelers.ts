@@ -1,9 +1,11 @@
-import { reactive, ref, watchEffect } from 'vue';
+import { computed, reactive } from 'vue';
 import type { Traveler, TravelerFilters } from './types';
 import { useFetch } from '@/composables/useFetch';
 import { createQueryString } from '@/utils/createQueryString';
 import type { Page } from '@/paging/types';
 import { mapTraveler } from './travelerMapper';
+
+const BASE_URL = 'http://localhost:8080/_api/travelers/getall';
 
 export function useTravelers(initial: Partial<TravelerFilters> = {}) {
   const filters = reactive<TravelerFilters>({
@@ -15,30 +17,21 @@ export function useTravelers(initial: Partial<TravelerFilters> = {}) {
     pageSize: initial.pageSize ?? 5,
   });
 
-  const totalPages = ref(0);
-  const travelers = ref<Traveler[]>([]);
-  const { fetchData, loading, error } = useFetch<Page<Traveler>>('http://localhost:8080/travelers');
+  const url = computed(() => {
+    const qs = createQueryString(filters);
+    return `${BASE_URL}${qs.length > 0 ? `?${qs}` : ''}`;
+  });
+
+  const { data: page, loading, error } = useFetch<Page<Traveler>>(url);
+
+  const travelers = computed(() => page.value?.items.map(traveler => mapTraveler(traveler)) ?? []);
+  const totalPages = computed(() => page.value?.totalPages ?? 0);
 
   function clearFilters() {
     filters.query = '';
     filters.cardTypes = [];
     filters.page = 1;
   }
-
-  async function fetchTravelers() {
-    const qs = createQueryString(filters);
-    const page = await fetchData(qs);
-    if (page == null) {
-      return;
-    }
-
-    travelers.value = page.items.map(traveler => mapTraveler(traveler));
-    totalPages.value = page.totalPages;
-  }
-
-  watchEffect(async () => {
-    await fetchTravelers();
-  });
 
   return {
     travelers,

@@ -1,19 +1,19 @@
-import { ref, type Ref } from 'vue';
+import { ref, watchEffect, type Ref } from 'vue';
 
-export function useFetch<T>(url: string) {
+export function useFetch<T>(url: Ref<string>) {
+  const data: Ref<T | null> = ref(null);
   const error: Ref<boolean> = ref(false);
   const loading: Ref<boolean> = ref(true);
 
   let lastRunId = 0;
-  async function fetchData(query?: string) {
+  async function fetchData() {
     const runId = ++lastRunId;
 
     loading.value = true;
     error.value = false;
 
     try {
-      const requestUrl = query == null ? url : `${url}${query.length > 0 ? `?${query}` : ''}`;
-      const response = await fetch(requestUrl);
+      const response = await fetch(url.value);
 
       if (runId !== lastRunId) {
         // A newer fetch has started -- drop this stale result.
@@ -27,7 +27,7 @@ export function useFetch<T>(url: string) {
         return;
       }
 
-      return (await response.json()) as T;
+      data.value = await response.json();
     } catch (err) {
       if (runId === lastRunId) {
         error.value = true;
@@ -39,5 +39,9 @@ export function useFetch<T>(url: string) {
     }
   }
 
-  return { fetchData, error, loading };
+  watchEffect(async () => {
+    await fetchData();
+  });
+
+  return { data, error, loading };
 }
